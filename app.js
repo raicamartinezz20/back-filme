@@ -99,6 +99,15 @@ app.get('/v2/acme/filme/:id', cors(), async (request, response, next) => {
     response.json(dadosFilme)
 })
 
+app.get('/v2/acmefilmes/filtro/filme/', cors(), async(request, response, next) => {
+    let name = request.query.nome
+
+    let dadosFilme = await controllerFilmes.getFilmeNome(name)
+
+    response.status(dadosFilme.status_code)
+    response.json(dadosFilme)
+})
+
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 })

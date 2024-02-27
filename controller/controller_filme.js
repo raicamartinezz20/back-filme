@@ -89,10 +89,38 @@ const getBuscarFilme = async (id) => {
 }
 
 
+const getFilmeNome = async function(name) {
+    let nomeFilme = name
+
+    let filmeJson = {}
+
+    if (nomeFilme == '' || nomeFilme == undefined) {
+        return ERROR_Messages.ERROR_INVALID_NAME
+    } else {
+        let dadosFilme = await filmesDAO.selectFilmeByName(nomeFilme)
+
+        if (dadosFilme) {
+
+            if (dadosFilme.length > 0) {
+
+                filmeJson.filme = dadosFilme
+                filmeJson.status_code = 200
+
+                return filmeJson
+            } else {
+                return ERROR_Messages.ERROR_NOTFOUND
+            }
+        } else {
+            return ERROR_Messages.ERROR_INTERNAL_SERVER_DB
+        }
+    }
+}
+
 module.exports = {
     setNovoFilme,
     setAtualizarFilme,
     setExcluirFilme,
     getListarFilmes,
-    getBuscarFilme
+    getBuscarFilme,
+    getFilmeNome
 }
