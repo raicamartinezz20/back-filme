@@ -1,6 +1,6 @@
 /***********************************************************************************************
  * Objetivo: Criar uma estrutura para trazer informações sobre os dados da ACME Filmes         *
- * Autor: Gustavo Henrique                                                                     *
+ * Autor: Raica Martinez                                                                   *
  * Data: 23/01/2024                                                                            *
  * Versão: 1.0                                                                                 *
 ***********************************************************************************************/
