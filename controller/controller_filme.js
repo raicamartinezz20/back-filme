@@ -1,7 +1,7 @@
 /**********************************************************************************************************
  * Objetivo: Arquivo responsável por realizar validações, consistencias e regra de negócio para os filmes *
  * Data: 30/01/2024                                                                                       *
- * Autor: Gustavo Henrique                                                                                *
+ * Autor: Raica Martinez                                                                              *
  * 1.0                                                                                                    *
  *********************************************************************************************************/
 
