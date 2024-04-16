@@ -26,22 +26,26 @@ const deleteFilme = async () => {
 
 }
 
-//Função para retornar todos os filmes do Banco de Dados
+//Função para retornar todos os Filme do Banco de Dados
 const selectAllFilmes = async () => {
+
+    try{
+
+    
     //Script SQL para buscar todos os registros do database
     let sql = 'select * from tbl_filmes'
 
     //$queryRawUnsafe(sql) ------ Encaminha uma variavel
-    //$queryRaw('select * from tbl_filme') ------------- Encaminha direto o script
+    //$queryRaw('select * from tbl_generos') ------------- Encaminha direto o script
 
     //Executa o scriptSQL no DB e guarda o retorno dos dados
     let rsFilmes = await prisma.$queryRawUnsafe(sql)
 
-    //Validação para retornar os dados ou retornar false
-    if (rsFilmes.length > 0)
-        return rsFilmes
-    else
+    return rsFilmes
+    
+    } catch (error) {
         return false
+    }
 
 }
 

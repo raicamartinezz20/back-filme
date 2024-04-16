@@ -95,6 +95,45 @@ app.get('/v2/acmefilmes/filtro/filme/', cors(), async(request, response, next) =
     response.json(dadosFilme)
 })
 
+// genero
+//New EndPoint: retorna dados do Banco De Dados
+app.get('/v2/acme/generos', cors(), async (request, response, next) => {
+
+    //Chama a função para retornar os dados de FIlme
+    let dadosGeneros = await controllerGeneros.getListarGenero()
+
+    //Validação para retornar os dados ou o erro 404
+    if (dadosGeneros) {
+        response.json(dadosGeneros)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum resgistro encontrado' })
+        response.status(404)
+    }
+
+})
+
+//EndPoints: listar generos filtrando pelo id
+app.get('/v2/acme/genero/:id', cors(), async (request, response, next) => {
+
+    //Recebe o ID encaminhando a requisição
+    let idGenero = request.params.id
+
+    let dadosGenero = await controllerGeneros.getBuscarGenero(idGenero)
+
+    response.status(dadosGenero.status_code)
+    response.json(dadosGenero)
+})
+
+app.get('/v2/acmefilmes/filtro/filme/', cors(), async(request, response, next) => {
+    let name = request.query.nome
+
+    let dadosFilme = await controllerFilmes.getFilmeNome(name)
+
+    response.status(dadosFilme.status_code)
+    response.json(dadosFilme)
+})
+
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 })
