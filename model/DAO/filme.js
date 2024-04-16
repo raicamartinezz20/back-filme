@@ -77,7 +77,7 @@ const selectFilmeByName = async function(name) {
 module.exports = {
     insertFilme,
     updateFilme,
-    deleteFilme,
+    deleteFilme, 
     selectAllFilmes,
     selectFilmeById,
     selectFilmeByName
