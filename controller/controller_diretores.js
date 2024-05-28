@@ -5,7 +5,7 @@ const diretoresDAO = require('../model/DAO/diretor.js')
 const message = require('../modulo/config.js')
 
 // função para inserir um novo Diretor no DBA
-const setNovoDiretor = async (dadosDiretor, contentType) => {
+const setNovoDiretor = async (diretorDados, contentType) => {
 
     try {
 
@@ -15,27 +15,27 @@ const setNovoDiretor = async (dadosDiretor, contentType) => {
             let resultDadosDiretor = {}
 
             //Validação para verificar campos obrigatórios e conistência de dados
-            if (dadosDiretor.nome == '' || dadosDiretor.nome == undefined || dadosDiretor.nome.length > 150) {
+            if (diretorDados.nome == '' || diretorDados.nome == undefined || diretorDados.nome.length > 200) {
 
                 return message.ERROR_REQUIRED_FIELDS // 400
 
             } else {
 
                     //envia os dados para o DAO inserir no BD
-                    let novoDiretor = await diretoresDAO.insertDiretor(dadosDiretor);
+                    let novoDiretor = await diretoresDAO.insertDiretor(diretorDados);
 
                     //validação para verificar se os dados foram inseridos pelo DAO no BD 
                     if (novoDiretor) {
 
                         let id = await diretoresDAO.selectLastId()
 
-                        dadosDiretor.id = Number(id[0].id)
+                        diretorDados.id = Number(id[0].id)
 
                         // cria o padrão de JSON para retorno dos dados criados no DB
                         resultDadosDiretor.status = message.SUCCESS_CREATED_ITEM.status
                         resultDadosDiretor.status_code = message.SUCCESS_CREATED_ITEM.status_code
                         resultDadosDiretor.message = message.SUCCESS_CREATED_ITEM.message
-                        resultDadosDiretor.diretor = dadosDiretor
+                        resultDadosDiretor.diretor = diretorDados
 
                         return resultDadosDiretor
                 }
@@ -56,7 +56,7 @@ const setNovoDiretor = async (dadosDiretor, contentType) => {
 }
 
 //função para atualizar um diretor existente
-const setAtualizarDiretor = async (dadosDiretor, contentType, id) => {
+const setAtualizarDiretor = async (diretorDados, contentType, id) => {
     
     try {
         
@@ -69,25 +69,25 @@ const setAtualizarDiretor = async (dadosDiretor, contentType, id) => {
 
             //Validação para verificar campos obrigatórios e consistência de dados
             if (diretor == '' || diretor == undefined || 
-                dadosDiretor.nome == '' || dadosDiretor.nome == undefined || dadosDiretor.nome.length > 150) {
+                diretorDados.nome == '' || diretorDados.nome == undefined || diretorDados.nome.length > 200) {
 
                 return message.ERROR_REQUIRED_FIELDS // 400
 
             } else {
 
                     //envia os dados para o DAO inserir no BD
-                    let diretorAtt = await diretoresDAO.updateDiretor(dadosDiretor, diretor);
+                    let diretorAtt = await diretoresDAO.updateDiretor(diretorDados, diretor);
 
                     //validação para verificar se os dados foram inseridos pelo DAO no BD 
                     if (diretorAtt) {
                         
-                        dadosDiretor.id = diretor
+                        diretorDados.id = diretor
 
                         // cria o padrão de JSON para retorno dos dados criados no DB
                         resultDadosDiretor.status = message.SUCCESS_UPDATED_ITEM.status
                         resultDadosDiretor.status_code = message.SUCCESS_UPDATED_ITEM.status_code
                         resultDadosDiretor.message = message.SUCCESS_UPDATED_ITEM.message
-                        resultDadosDiretor.diretor = dadosDiretor
+                        resultDadosDiretor.diretor = diretorDados
 
                         return resultDadosDiretor
 
@@ -153,12 +153,12 @@ const setExcluirDiretor = async (id) => {
 const getListarDiretores = async () => {
     let diretoresJSON = {}
 
-    let dadosDiretores = await diretoresDAO.selectAllDiretores()
+    let diretoresDados = await diretoresDAO.selectAllDiretores()
 
-    if (dadosDiretores) {
-        if (dadosDiretores.length > 0) {
-            diretoresJSON.diretores = dadosDiretores
-            diretoresJSON.qt = dadosDiretores.length
+    if (diretoresDados) {
+        if (diretoresDados.length > 0) {
+            diretoresJSON.diretores = diretoresDados
+            diretoresJSON.qt = diretoresDados.length
             diretoresJSON.status_code = 200
             return diretoresJSON
         } else {
@@ -181,13 +181,12 @@ const getBuscarDiretor = async (id) => {
     if (idDiretor == '' || idDiretor == undefined || isNaN(idDiretor)) {
         return message.ERROR_INVALID_ID //400
     } else {
-        let dadosDiretor = await diretoresDAO.selectByIdDiretor(idDiretor)
+        let diretorDados = await diretoresDAO.selectByIdDiretor(idDiretor)
 
-        if (dadosDiretor) {
+        if (diretorDados) {
             // validação para verificar se existem dados de retorno
-            if (dadosDiretor.length > 0) {
-                // diva 🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺
-                diretorJSON.diretor = dadosDiretor
+            if (diretorDados.length > 0) {
+                diretorJSON.diretor = diretorDados
                 diretorJSON.status_code = 200
                 return diretorJSON
             } else {
@@ -210,11 +209,11 @@ const getDiretorByNome = async (nome) => {
         return message.ERROR_INVALID_PARAM //400
     } else {
 
-        let dadosDiretores = await diretoresDAO.selectByNome(filtro)
-        if (dadosDiretores) {
-            if (dadosDiretores.length > 0) {
-                diretoresJSON.diretores = dadosDiretores
-                diretoresJSON.qt = dadosDiretores.length
+        let diretoresDados = await diretoresDAO.selectByNome(filtro)
+        if (diretoresDados) {
+            if (diretoresDados.length > 0) {
+                diretoresJSON.diretores = diretoresDados
+                diretoresJSON.qt = diretoresDados.length
                 diretoresJSON.status_code = 200
                 return diretoresJSON
             } else {
@@ -225,32 +224,6 @@ const getDiretorByNome = async (nome) => {
         }
     }
 }
-
-// função para buscar um diretor filtrando pelo nome
-// const getFilmeByDiretor = async (nome) => {
-//     let diretorJSON = {}
-
-//     let filtro = nome
-
-//     if (filtro == '' || filtro == undefined) {
-//         return message.ERROR_INVALID_PARAM //400
-//     } else {
-
-//         let dadosDiretores = await diretoresDAO.selectByNome(filtro)
-//         if (dadosDiretores) {
-//             if (dadosDiretores.length > 0) {
-//                 diretoresJSON.diretores = dadosFilmes
-//                 diretoresJSON.qt = dadosDiretores.length
-//                 diretoresJSON.status_code = 200
-//                 return diretoresJSON
-//             } else {
-//                 return message.ERROR_NOT_FOUND //404
-//             }
-//         } else {
-//             return message.ERROR_INTERNAL_SERVER_DBA // 500
-//         }
-//     }
-// }
 
 module.exports = {
     setNovoDiretor,

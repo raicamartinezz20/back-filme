@@ -6,18 +6,78 @@
  *********************************************************************************************************************************************************/
 
 /************************ MENSAGENS DE ERRO DO PROJETO ************************/
+const ERROR_INVALID_ID = {
+    status: false, 
+    status_code: 400, 
+    message: "O ID encaminhado na requisição não é válido."
+}
 
-const ERROR_INVALID_ID = { status: false, status_code: 400, message: "Id invalido" }
+const ERROR_REQUIRED_FIELDS = {
+    status: false, 
+    status_code: 400, 
+    message: "Existem campos obrigatórios que não foram preenchidos corretamente."
+}
 
-const ERROR_NOTFOUND = { status: false, status_code: 404, message: "Nenhum item encontrado" }
+const ERROR_NOT_FOUND = {
+    status: false, 
+    status_code: 404,
+    message: "Nenhum item encontrado na requisitação."
+}
 
-const ERROR_INTERNAL_SERVER_DB = { status: false, status_code: 500, message: "Ocorreram erros no processamento da DB. Contate o administrador da API" }
+const ERROR_INTERNAL_SERVER_DBA = {
+    status: false, 
+    status_code: 500, 
+    message: "Ocoreram erros internos no servidor. Por favor, contate o administrador do sistema."
+}
 
-const ERROR_INVALID_NAME = { status: false, status_code: 400, message: "Formato de Nome Invalido" }
+const ERROR_INVALID_PARAM = {
+    status: false, 
+    status_code: 400, 
+    message: "O parâmetro encaminhado não é válido."
+}
+
+const ERROR_CONTENT_TYPE = {
+    status: false, 
+    status_code: 415, 
+    message: "O Content-Type da requisição não é supotado. Os dados precisam ser encaminhados no formato application/json."
+}
+
+const ERROR_INTERNAL_SERVER = {
+    status: false, 
+    status_code: 500, 
+    message: "Ocoreram erros internos no servidor na camada de negócio da API. Por favor, contate o administrador do sistema."
+}
+
+
+/***** MENSAGENS DE SUCESSO *****/
+
+const SUCCESS_CREATED_ITEM = {
+    status: true, 
+    status_code: 201, 
+    message: "Item criado com sucesso.", 
+}
+
+const SUCCESS_DELETED_ITEM = {
+    status: true, 
+    status_code: 200, 
+    message: "Item deletado com sucesso.", 
+}
+
+const SUCCESS_UPDATED_ITEM = {
+    status: true, 
+    status_code: 200, 
+    message: "Item atualizado com sucesso.", 
+}
 
 module.exports = {
     ERROR_INVALID_ID,
-    ERROR_NOTFOUND,
-    ERROR_INTERNAL_SERVER_DB,
-    ERROR_INVALID_NAME
+    ERROR_REQUIRED_FIELDS,
+    ERROR_NOT_FOUND,
+    ERROR_INTERNAL_SERVER_DBA,
+    ERROR_INVALID_PARAM,
+    ERROR_CONTENT_TYPE,
+    ERROR_INTERNAL_SERVER,
+    SUCCESS_CREATED_ITEM,
+    SUCCESS_DELETED_ITEM,
+    SUCCESS_UPDATED_ITEM
 }

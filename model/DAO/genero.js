@@ -1,81 +1,160 @@
-//Import da bibiblioteca do prisma client 
+// import da biblioteca do prisma client
 const { PrismaClient } = require('@prisma/client')
 
-//Instanciando a classe PrismaClient
+// instanciando o objeto prisma com as caracteristicas do prisma client
 const prisma = new PrismaClient()
 
-//Função para inserir um genero no Banco de Dados
-const insertGenero = async () => {
+// inserir um novo genero
+const insertGenero = async (generoDados) => {
+    try {
 
-}
+        let sql
 
-//Função para atualizar um genero no Banco de Dados
-const updateGenero = async () => {
+        sql = `insert into tbl_genero (
+                                            nome
+                                        )values (
+                                            '${generoDados.nome}'
+                                        )`
 
-}
+    // executa o sciptSQL no DB (devemos usar o comando execute e não o query)
+    // o comando execute deve ser utilizado para INSERT, UPDATE, DELETE
+    let result = await prisma.$executeRawUnsafe(sql)
 
-//Função para deletar um Genero no Banco de Dados
-const deleteGenero = async () => {
-
-}
-
-//Função para retornar todos os Genero do Banco de Dados
-const selectAllGeneros = async () => {
-
-    try{
-
+    // validação para verificar se o insert funcionou no DB
+    if(result){
+        return true
+    } else {
+        return false
+    }
     
-    //Script SQL para buscar todos os registros do database
-    let sql = 'select * from tbl_generos'
-
-    //$queryRawUnsafe(sql) ------ Encaminha uma variavel
-    //$queryRaw('select * from tbl_generos') ------------- Encaminha direto o script
-
-    //Executa o scriptSQL no DB e guarda o retorno dos dados
-    let rsGeneros = await prisma.$queryRawUnsafe(sql)
-
-    return rsGeneros
     
+} catch (error) {
+    
+    return false
+
+    }
+}
+
+// atualizar uma nacionalidade existente filtrando pelo ID
+const updateGenero = async (generoDados, id) => {
+    
+    try {
+
+        let sql
+
+        sql = `update tbl_genero  set  
+                                    nome = "${generoDados.nome}"
+                                    
+                                    where id = ${id}`
+
+            // executa o sciptSQL no DB (devemos usar o comando execute e não o query)
+            // o comando execute deve ser utilizado para INSERT, UPDATE, DELETE
+            let result = await prisma.$executeRawUnsafe(sql)
+            
+
+            // validação para verificar se o insert funcionou no DB
+            if(result){
+                return true
+            } else {
+                return false
+            }
+
     } catch (error) {
+        
+        return false
+
+    }
+
+}
+
+// excluir uma nacionalidade existente filtrando pelo ID
+const deleteGenero = async (id) => {
+
+    try {
+        
+        let sql = `delete from tbl_genero where id = ${id}`
+
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsGenero
+        let rsGenero = await prisma.$executeRawUnsafe(sql)
+        
+        return rsGenero
+        
+    } catch (error) {
+        
         return false
     }
 
 }
 
-//Função para buscar um Genero no Banco de Dados filtrando pelo ID
+// listar todos as nacionalidades
+const selectAllGeneros = async () => {
+
+    try {
+        let sql = 'select * from tbl_genero order by id desc'
+    
+        // $queryrawUnsafe(‘encaminha apenas a variavel’)
+        // $queryRaw(‘codigo digitado aqui’)
+    
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsGenero
+        let rsGenero = await prisma.$queryRawUnsafe(sql)
+        return rsGenero
+    } catch (error) {
+        return false
+    }
+}
+
+// buscar o filme existente filtrando pelo ID
 const selectByIdGenero = async (id) => {
 
     try {
-        let sql = `select * from tbl_generos where id = ${id}`
 
-        let rsGeneros = await prisma.$queryRawUnsafe(sql)
+        // realiza a busca da nacionalidade pelo id
+        let sql = `select * from tbl_genero where id=${id}`
 
-        return rsGeneros
-    
+        // executa no DBA o script SQL
+        let rsGenero = await prisma.$queryRawUnsafe(sql)
+        return rsGenero
+
     } catch (error) {
         return false
     }
-
-
 }
 
-const selectGeneroByName = async function(name) {
+const selectByNome = async (nome) => {
+    
     try {
-        let sql = `select * from tbl_generos where nome like "%${name}%"`
+        let sql = `select * from tbl_genero where nome like '%${nome}%'`
+    
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsNacionalidade
+        let rsGenero = await prisma.$queryRawUnsafe(sql)
 
-        let rsGeneros = await prisma.$queryRawUnsafe(sql)
-
-        return rsGeneros
+        return rsGenero
     } catch (error) {
         return false
+    }
+}
+
+const selectLastId = async () => {
+    try {
+
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_genero limit 1' 
+
+        let rsGenero = await prisma.$queryRawUnsafe(sql)
+        return rsGenero
+
+    } catch (error) {
+
+        return false
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
     }
 }
 
 module.exports = {
     insertGenero,
     updateGenero,
-    deleteGenero, 
+    deleteGenero,
     selectAllGeneros,
     selectByIdGenero,
-    selectGeneroByName
+    selectByNome,
+    selectLastId
 }

@@ -1,138 +1,228 @@
-//Import do arquivo de configuração do Projeto
+// import do arquivo DAO para manipular dados do BD
+const generosDAO = require('../model/DAO/genero.js')
+
+// import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 
-//import do arquivo DAO para manipular dados dos genero 
-const generoDAO = require('../model/DAO/genero.js')
+// função para inserir uma nova nacionalidade no DBA
+const setNovoGenero = async (generoDados, contentType) => {
 
-//Função para inserir um novo genero
-const setNovoGenero = async (dadosGenero) => {
+    try {
 
-    // cria a variável JSON
-    let resultDadosGenero = {}
+        if (String(contentType).toLowerCase() == 'application/json') {
 
-    //Validação para verificar campos obrigatórios e conistência de dados
-    if (dadosGenero.nome == ''            || dadosGenero.nome == undefined            || dadosGenero.nome.length > 80 
-    ) {
+            // cria a variável JSON
+            let resultDadosGenero = {}
 
-        return message.ERROR_REQUIRED_FIELDS; // 400
+            //Validação para verificar campos obrigatórios e conistência de dados
+            if (generoDados.nome == '' || generoDados.nome == undefined || generoDados.nome.length > 50) {
+
+                return message.ERROR_REQUIRED_FIELDS // 400
+
+            } else {
+
+                    //envia os dados para o DAO inserir no BD
+                    let novoGenero = await generosDAO.insertGenero(generoDados);
+
+                    //validação para verificar se os dados foram inseridos pelo DAO no BD 
+                    if (novoGenero) {
+
+                        let id = await generosDAO.selectLastId()
+
+                        generoDados.id = Number(id[0].id)
+
+                        // cria o padrão de JSON para retorno dos dados criados no DB
+                        resultDadosGenero.status = message.SUCCESS_CREATED_ITEM.status
+                        resultDadosGenero.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                        resultDadosGenero.message = message.SUCCESS_CREATED_ITEM.message
+                        resultDadosGenero.genero = generoDados
+
+                        return resultDadosGenero
+
+                }
+
+            }
+
+        } else {
+            return message.ERROR_CONTENT_TYPE //415
+        }
+
+    } catch (error) {
+
+        return message.ERROR_INTERNAL_SERVER // 500
 
     }
 
-    //envia os dados para o DAO inserir no BD
-    let novoGenero = await generoDAO.insertGenero(dadosGenero);
 
-    //validação para verificar se os dados foram inseridos pelo DAO no BD 
-    if (novoGenero) {
+}
 
-        // cria o padrão de JSON para retorno dos dados criados no DB
-        resultDadosGenero.status = message.SUCCESS_CREATED_ITEM.status
-        resultDadosGenero.status_code = message.SUCCESS_CREATED_ITEM.status_code
-        resultDadosGenero.message = message.SUCCESS_CREATED_ITEM.message
-        resultDadosGenero.genero = dadosGenero
+//função para atualizar uma nacionalidade existente
+const setAtualizarGenero = async (generoDados, contentType, id) => {
 
-        return resultDadosGenero
+    
+    try {
+        
+        let genero = id
+        
+        if (String(contentType).toLowerCase() == 'application/json') {
 
-    } else {
+            // cria a variável JSON
+            let resultDadosGenero = {}
 
-        return message.ERROR_INTERNAL_SERVER_DBA; // 500  
+            //Validação para verificar campos obrigatórios e consistência de dados
+            if (genero == '' || genero == undefined || 
+                generoDados.nome == '' || generoDados.nome == undefined || generoDados.nome.length > 100) {
+
+                return message.ERROR_REQUIRED_FIELDS; // 400
+
+            } else {
+
+                //envia os dados para o DAO inserir no BD
+                let generoAtt = await generosDAO.updateGenero(generoDados, genero);
+
+                //validação para verificar se os dados foram inseridos pelo DAO no BD 
+                if (generoAtt) {
+                    
+                    generoDados.id = genero
+
+                    // cria o padrão de JSON para retorno dos dados criados no DB
+                    resultDadosGenero.status = message.SUCCESS_UPDATED_ITEM.status
+                    resultDadosGenero.status_code = message.SUCCESS_UPDATED_ITEM.status_code
+                    resultDadosGenero.message = message.SUCCESS_UPDATED_ITEM.message
+                    resultDadosGenero.genero = generoDados
+
+                    return resultDadosGenero
+
+                } else {
+
+                    return message.ERROR_INTERNAL_SERVER_DBA // 500
+
+                }
+
+            }
+
+        } else {
+            return message.ERROR_CONTENT_TYPE //415
+        }
+
+    } catch (error) {
+
+        return message.ERROR_INTERNAL_SERVER // 500
+
+    }
+    
+
+}
+
+// função para excluir uma nacionalidade existente
+const setExcluirGenero = async (id) => {
+
+    try {
+
+        let genero = id
+
+        let valGenero  = await getBuscarGenero(genero)
+
+        let resultDadosGenero
+
+        if (genero == '' || genero == undefined || isNaN(genero)) {
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else if(valGenero.status == false){
+
+            return message.ERROR_NOT_FOUND // 404
+
+        }else {
+
+            //Envia os dados para a model inserir no BD
+            resultDadosGenero = await generosDAO.deleteGenero(genero)
+
+            //Valida se o BD inseriu corretamente os dados
+            if (resultDadosGenero)
+                return message.SUCCESS_DELETED_ITEM // 200
+            else
+                return message.ERROR_INTERNAL_SERVER_DBA // 500
+
+        }
+        
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
     }
 }
-//Função para atualizar um genero existente
-const setAtualizarGenero = async () => {
 
-}
+// função para listar todas as nacionalidade existentes no DBA
+const getListarGeneros = async () => {
+    let generosJSON = {}
 
-//Função para excluir um genero existente
-const setExcluirGenero = async () => {
+    let generoDados = await generosDAO.selectAllGeneros()
 
-}
-
-//Função para retornar todos os genero do database
-const getListarGenero = async () => {
-
-    //Cria o objeto JSON
-    let generoJSON = {}
-
-    //Cria a função DAO para retornar os dados do BD
-    let dadosGenero = await generoDAODAO.selectAllGenero()
-
-
-
-    //Validação para criar o JSON de dados
-    if (dadosGenero) {
-        if (dadosGenero.length > 0) {
-            generoJSON.genero = dadosGeneros
-            generoJSON.quantidade = dadosGenero.length
-            generoJSON.status_code = 200
-
-            return generoJSON
+    if (generoDados) {
+        if (generoDados.length > 0) {
+            generosJSON.generos = generoDados
+            generosJSON.qt = generoDados.length
+            generosJSON.status_code = 200
+            return generosJSON
         } else {
             return message.ERROR_NOT_FOUND
         }
     } else {
-        return message.ERROR_INTERNAL_SERVER_DB
+        return message.ERROR_INTERNAL_SERVER_DBA
     }
 
 
 }
 
-//Função para retornar filtro do genero pelo ID
+// função para buscar uma nacionalidade pelo ID
 const getBuscarGenero = async (id) => {
-
-    let idGenero = id
-
+    // recebe o id da GegetBuscarGenero
+    let idGenero = id;
     let generoJSON = {}
 
-    //Validação para verificar o ID do genero antes de encaminhar para o DAO
+    // validação para ID vazio, indefinido ou não numérico
     if (idGenero == '' || idGenero == undefined || isNaN(idGenero)) {
-        return message.ERROR_INVALID_ID
+        return message.ERROR_INVALID_ID //400
     } else {
+        let generoDados = await generosDAO.selectByIdGenero(idGenero)
 
-        //Encaminha o ID do genero para o DAO para o retorno do Banco de Dados
-        let dadosGenero = await generoDAO.selectByIdGenero(idGenero)
-
-        //Validação para verificar se o DAO retornou dados
-        if (dadosGenero) {
-
-            if (dadosGenero.length > 0) {
-                //Cria o JSON de retorno de dados
-                generoJSON.genero = dadosGenero
+        if (generoDados) {
+            // validação para verificar se existem dados de retorno
+            if (generoDados.length > 0) {
+                generoJSON.genero = generoDados
                 generoJSON.status_code = 200
-
                 return generoJSON
             } else {
-                return message.ERROR_NOT_FOUND
+                return message.ERROR_NOT_FOUND //404
             }
+
         } else {
-            return message.ERROR_INTERNAL_SERVER_DB
+            return message.ERROR_INTERNAL_SERVER_DBA ///500
         }
     }
 }
 
+// função para buscar uma nacionalidade filtrando pelo nome
+const getGeneroByNome = async (nome) => {
+    let generosJSON = {}
 
-const getGeneroNome = async function(name) {
-    let nomeGenero = name
+    let filtro = nome
 
-    let generoJson = {}
-
-    if (nomeGenero == '' || nomeGenero == undefined) {
-        return ERROR_Messages.ERROR_INVALID_NAME
+    if (filtro == '' || filtro == undefined) {
+        return message.ERROR_INVALID_PARAM //400
     } else {
-        let dadosGenero = await generoDAO.selectGeneroByName(nomeGenero)
 
-        if (dadosGenero) {
-
-            if (dadosGenero.length > 0) {
-
-                generoJson.genero = dadosGenero
-                generoJson.status_code = 200
-
-                return generoJson
+        let generoDados = await generosDAO.selectByNome(filtro)
+        if (generoDados) {
+            if (generoDados.length > 0) {
+                generosJSON.generos = generoDados
+                generosJSON.qt = generoDados.length
+                generosJSON.status_code = 200
+                return generosJSON
             } else {
-                return ERROR_Messages.ERROR_NOTFOUND
+                return message.ERROR_NOT_FOUND //404
             }
         } else {
-            return ERROR_Messages.ERROR_INTERNAL_SERVER_DB
+            return message.ERROR_INTERNAL_SERVER_DBA // 500
         }
     }
 }
@@ -141,7 +231,7 @@ module.exports = {
     setNovoGenero,
     setAtualizarGenero,
     setExcluirGenero,
-    getListarGenero,
+    getListarGeneros,
     getBuscarGenero,
-    getGeneroNome
+    getGeneroByNome
 }

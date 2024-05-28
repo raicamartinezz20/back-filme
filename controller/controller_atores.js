@@ -1,12 +1,14 @@
 // import do arquivo DAO para manipular dados do BD
 const atoresDAO = require('../model/DAO/ator.js')
+const atoresNacionalidadeDAO = require('../model/DAO/atorNacionalidade.js')
 const controllerSexo = require('./controller_sexo.js')
+const controllerNacionalidadeAtores = require('./controller_atoreNacionalidade.js')
 
 // import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 
 // post: função para inserir um novo ator no DBA
-const setNovoAtor = async (dadosAtor, contentType) => {
+const setNovoAtor = async (atorDados, contentType) => {
 
     try {
 
@@ -14,13 +16,13 @@ const setNovoAtor = async (dadosAtor, contentType) => {
 
             // cria a variável JSON
             let resultDadosAtor = {}
-            let validacaoSexo = await controllerSexo.getBuscarGender(dadosAtor.sexo_id) 
+            let sexoValidacao = await controllerSexo.getBuscarSexo(atorDados.id_sexo) 
 
             //Validação para verificar campos obrigatórios e conistência de dados
-            if (dadosAtor.nome == ''             || dadosAtor.nome == undefined              || dadosAtor.nome.length > 150       ||
-                dadosAtor.data_nascimento == ''  || dadosAtor.data_nascimento == undefined   ||
-                dadosAtor.biografia == ''        || dadosAtor.biografia == undefined         || dadosAtor.biografia.length > 65535 ||
-                dadosAtor.sexo_id == ''          || dadosAtor.sexo_id == undefined           || validacaoSexo.status_code == false
+            if (atorDados.nome == ''             || atorDados.nome == undefined              || atorDados.nome.length > 200       ||
+                atorDados.data_nascimento == ''  || atorDados.data_nascimento == undefined   ||
+                atorDados.biografia == ''        || atorDados.biografia == undefined         || atorDados.biografia.length > 7000 ||
+                atorDados.id_sexo == ''          || atorDados.id_sexo == undefined           || sexoValidacao.status_code == false
             ) {
 
                 return message.ERROR_REQUIRED_FIELDS // 400
@@ -28,10 +30,10 @@ const setNovoAtor = async (dadosAtor, contentType) => {
             } else {
 
                 if(
-                    dadosAtor.data_falecimento != null      &&
-                    dadosAtor.data_falecimento != ''        &&
-                    dadosAtor.data_falecimento != undefined &&
-                    dadosAtor.data_falecimento.length != 10
+                    atorDados.data_falecimento != null      &&
+                    atorDados.data_falecimento != ''        &&
+                    atorDados.data_falecimento != undefined &&
+                    atorDados.data_falecimento.length != 10
                 ){
 
                     return message.ERROR_REQUIRED_FIELDS
@@ -39,20 +41,20 @@ const setNovoAtor = async (dadosAtor, contentType) => {
                 }
 
                     //envia os dados para o DAO inserir no BD
-                    let novoAtor = await atoresDAO.insertAtor(dadosAtor);
+                    let novoAtor = await atoresDAO.insertAtor(atorDados);
 
                     //validação para verificar se os dados foram inseridos pelo DAO no BD 
                     if (novoAtor) {
 
                         let id = await atoresDAO.selectLastId()
 
-                        dadosAtor.id = Number(id[0].id)
+                        atorDados.id = Number(id[0].id)
 
                         // cria o padrão de JSON para retorno dos dados criados no DB
                         resultDadosAtor.status = message.SUCCESS_CREATED_ITEM.status
                         resultDadosAtor.status_code = message.SUCCESS_CREATED_ITEM.status_code
                         resultDadosAtor.message = message.SUCCESS_CREATED_ITEM.message
-                        resultDadosAtor.ator = dadosAtor
+                        resultDadosAtor.ator = atorDados
 
                         return resultDadosAtor
 
@@ -74,7 +76,7 @@ const setNovoAtor = async (dadosAtor, contentType) => {
 }
 
 // put: função para atualizar um ator existente
-const setAtualizarAtor = async (dadosAtor, contentType, id) => {
+const setAtualizarAtor = async (atorDados, contentType, id) => {
 
     
     try {
@@ -85,13 +87,13 @@ const setAtualizarAtor = async (dadosAtor, contentType, id) => {
 
             // cria a variável JSON
             let resultDadosAtor = {}
-            let validacaoSexo = await controllerSexo.getBuscarGender(dadosAtor.sexo_id) 
+            let sexoValidacao = await controllerSexo.getBuscarGender(atorDados.sexo_id) 
 
             if (ator == ''                       || ator == undefined                        || 
-                dadosAtor.nome == ''             || dadosAtor.nome == undefined              || dadosAtor.nome.length > 150        ||
-                dadosAtor.data_nascimento == ''  || dadosAtor.data_nascimento == undefined   ||
-                dadosAtor.biografia == ''        || dadosAtor.biografia == undefined         || dadosAtor.biografia.length > 65535 ||
-                dadosAtor.sexo_id == ''          || dadosAtor.sexo_id == undefined           || validacaoSexo.status_code == false
+                atorDados.nome == ''             || atorDados.nome == undefined              || atorDados.nome.length > 200        ||
+                atorDados.data_nascimento == ''  || atorDados.data_nascimento == undefined   ||
+                atorDados.biografia == ''        || atorDados.biografia == undefined         || atorDados.biografia.length > 7000 ||
+                atorDados.id_sexo == ''          || atorDados.id_sexo == undefined           || sexoValidacao.status_code == false
             ) {
 
                 return message.ERROR_REQUIRED_FIELDS; // 400
@@ -99,10 +101,10 @@ const setAtualizarAtor = async (dadosAtor, contentType, id) => {
             } else {
 
                 if(
-                    dadosAtor.data_falecimento != null      &&
-                    dadosAtor.data_falecimento != ''        &&
-                    dadosAtor.data_falecimento != undefined &&
-                    dadosAtor.data_falecimento.length != 10
+                    atorDados.data_falecimento != null      &&
+                    atorDados.data_falecimento != ''        &&
+                    atorDados.data_falecimento != undefined &&
+                    atorDados.data_falecimento.length != 10
                 ){
             
                     return message.ERROR_REQUIRED_FIELDS
@@ -111,18 +113,18 @@ const setAtualizarAtor = async (dadosAtor, contentType, id) => {
 
                 
                 //envia os dados para o DAO inserir no BD
-                let atorAtt = await atoresDAO.updateAtor(dadosAtor, ator);
+                let atorAtt = await atoresDAO.updateAtor(atorDados, ator);
 
                 //validação para verificar se os dados foram inseridos pelo DAO no BD 
                 if (atorAtt) {
                     
-                    dadosAtor.id = ator
+                    atorDados.id = ator
 
                     // cria o padrão de JSON para retorno dos dados criados no DB
                     resultDadosAtor.status = message.SUCCESS_UPDATED_ITEM.status
                     resultDadosAtor.status_code = message.SUCCESS_UPDATED_ITEM.status_code
                     resultDadosAtor.message = message.SUCCESS_UPDATED_ITEM.message
-                    resultDadosAtor.ator = dadosAtor
+                    resultDadosAtor.ator = atorDados
 
                     return resultDadosAtor
 
@@ -188,23 +190,29 @@ const setExcluirAtor = async (id) => {
 const getListarAtores = async () => {
     let atoresJSON = {}
 
-    let dadosAtores = await atoresDAO.selectAllAtores()
+    let atoresDados = await atoresDAO.selectAllAtores()
 
-    if (dadosAtores) {
-        if (dadosAtores.length > 0) {
-            const promisse = dadosAtores.map(async(ator) => {
+    if (atoresDados) {
+        if (atoresDados.length > 0) {
+            const promisse = atoresDados.map(async(ator) => {
 
-                let sexo = await controllerSexo.getBuscarGender(ator.sexo_id)
+                let sexo = await controllerSexo.getBuscarSexo(ator.id_sexo)
+                let nacionalidade = await controllerNacionalidadeAtores.getListarNacionalidadesAtores(ator.id)
 
                 if(sexo.status_code == 200){
-                    ator.sexo = sexo.gender 
+                    ator.sexo = sexo.sexo2 
+                }
+
+
+                if(nacionalidade.status_code == 200){
+                    ator.nacionalidades = nacionalidade.nacionalidade_ator 
                 }
             })
 
             await Promise.all(promisse)
 
-            atoresJSON.atores = dadosAtores
-            atoresJSON.qt = dadosAtores.length
+            atoresJSON.atores = atoresDados
+            atoresJSON.qt = atoresDados.length
             atoresJSON.status_code = 200
             return atoresJSON
         } else {
@@ -227,13 +235,24 @@ const getBuscarAtor = async (id) => {
     if (idAtor == '' || idAtor == undefined || isNaN(idAtor)) {
         return message.ERROR_INVALID_ID //400
     } else {
-        let dadosAtor = await atoresDAO.selectByIdAtor(idAtor)
+        let atorDados = await atoresDAO.selectByIdAtor(idAtor)
 
-        if (dadosAtor) {
+        if (atorDados) {
             // validação para verificar se existem dados de retorno
-            if (dadosAtor.length > 0) {
-                // diva 🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺
-                atoresJSON.ator = dadosAtor
+            if (atorDados.length > 0) {
+
+                let sexo = await controllerSexo.getBuscarSexo(ator.id_sexo)
+                let nacionalidade = await controllerNacionalidadeAtores.getListarNacionalidadesAtores(ator.id)
+
+                if(sexo.status_code == 200){
+                    ator.sexo = sexo.sexo2 
+                }
+
+                if(nacionalidade.status_code == 200){
+                    ator.nacionalidades = nacionalidade.nacionalidade_ator 
+                }
+
+                atoresJSON.ator = atorDados
                 atoresJSON.status_code = 200
                 return atoresJSON
             } else {
@@ -256,11 +275,11 @@ const getAtorByNome = async (nome) => {
         return message.ERROR_INVALID_PARAM //400
     } else {
 
-        let dadosAtor = await atoresDAO.selectByNome(filtro)
-        if (dadosAtor) {
-            if (dadosAtor.length > 0) {
-                atoresJSON.classificacoes = dadosAtor
-                atoresJSON.qt = dadosAtor.length
+        let atorDados = await atoresDAO.selectByNome(filtro)
+        if (atorDados) {
+            if (atorDados.length > 0) {
+                atoresJSON.classificacoes = atorDados
+                atoresJSON.qt = atorDados.length
                 atoresJSON.status_code = 200
                 return atoresJSON
             } else {
@@ -272,11 +291,42 @@ const getAtorByNome = async (nome) => {
     }
 }
 
+const getListarNacionalidadesAtor = async(id) => {
+    try {
+        
+        let idAtor = id
+        let nacionalidadeJSON = {} 
+
+        if (idAtor == '' || idAtor == undefined || isNaN(idAtor)) {
+            return message.ERROR_INVALID_ID // 400
+        } else {
+            let dadosNacionalidades = await atoresNacionalidadeDAO.selectAllNacionalidadesByIdAtor(idAtor)
+
+            if(dadosNacionalidades){
+                if(dadosNacionalidades.length > 0){
+                    nacionalidadeJSON.nacionalidades = dadosNacionalidades
+                    nacionalidadeJSON.status_code = 200
+                    return nacionalidadeJSON
+                } else {
+                    return message.ERROR_NOT_FOUND // 404
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DBA
+            }
+
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+}
+
 module.exports = {
     setNovoAtor,
     setAtualizarAtor,
     setExcluirAtor,
     getListarAtores,
     getBuscarAtor,
-    getAtorByNome
+    getAtorByNome,
+    getListarNacionalidadesAtor
 }
