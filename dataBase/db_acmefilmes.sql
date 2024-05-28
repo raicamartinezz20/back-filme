@@ -6,8 +6,8 @@ create table tbl_classificacao
 (
 	id integer primary key auto_increment not null,
 	sigla varchar(2) not null,
-    icone varchar(200) not null,
-    descricao varchar(200) not null
+    icone varchar(500) not null,
+    descricao varchar(500) not null
 );
 
 create table tbl_filme
@@ -22,10 +22,10 @@ create table tbl_filme
     link_trailer varchar(200) not null,
     
     id_classificacao integer not null,
-    
+
     unique index (id),
     unique key (id),
-    
+
     foreign key (id_classificacao) references tbl_classificacao(id)
 );
 
@@ -121,11 +121,11 @@ select * from tbl_diretores;
 
 -- POST
 insert into tbl_classificacao(sigla, icone, descricao)values
-("L", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/DJCTQ_-_L.svg/75px-DJCTQ_-_L.svg.png", " é possível a presença de armas sem violência, morte não violentas, ou violência fantasiosa, como acontece em desenhos animados. Tratando-se de nudez, são permitidas cenas não erotizadas. Por fim, pode ser exibido consumo moderado ou insinuado de droga lícita."),
-("10", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/DJCTQ_-_10.svg/75px-DJCTQ_-_10.svg.png", " pode conter conteúdos angustiantes, de medo ou tensão, arma com violência, ato criminoso sem violência, linguagem depreciativa e ossada ou esqueleto com resquício de ato de violência. Conteúdo educativo sobre sexo e descrição do consumo de droga lícita, discussão sobre o tema droga e uso medicinal de droga ilícita, também é possível."),
-("12", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/DJCTQ_-_12.svg/75px-DJCTQ_-_12.svg.png", "pode conter agressão verbal, assédio sexual, ato violento e ato violento contra animal, bullying, descrição de violência, exposição ao perigo, exposição a cadáver, exposição de pessoa em situação constrangedora ou degradante, lesão corporal, morte derivada de ato heroico, morte natural ou acidental com dor ou violência, obscenidade, presença de sangue, sofrimento da vítima, supervalorização da beleza física e do consumo e violência psicológica. É permitido mostrar apelo, carícia ou, insinuação sexual, linguagem chula ou de conteúdo sexual, masturbação, nudez velada e simulação de sexo. As produções podem exibir consumo de droga lícita ou irregular de medicamento, discussão sobre legalização de droga ilícita e indução ao uso ou menção a droga ilícita."),
-("14", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/DJCTQ_-_14.svg/75px-DJCTQ_-_14.svg.png", "é possível ver cenas de aborto, estigma ou preconceito, eutanásia, exploração sexual, morte intencional e pena de morte. É permitida nudez, prostituição, relação sexual e vulgaridade. Quanto a drogas, as produções podem mostrar o consumo insinuado ou descrição do consumo ou tráfico de droga ilícita."),
-("16", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/DJCTQ_-_16.svg/75px-DJCTQ_-_16.svg.png", "pode apresentar atos de pedofilia, crime de ódio, estupro ou coação sexual, mutilação, suicídio, tortura e violência gratuita ou banalização da violência. Conteúdos com consumo, indução e produção ou tráfico de droga ilícita, também são permitidos."),
+("L", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/DJCTQ_-_L.svg/75px-DJCTQ_-_L.svg.png", "Armas, nudez não sexual e uso moderado de drogas lícitas são permitidos."),
+("10", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/DJCTQ_-_10.svg/75px-DJCTQ_-_10.svg.png", "Permite-se conteúdo sangrento, armas violentas, linguagem depreciativa e conteúdo educacional sobre sexo e drogas."),
+("12", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/DJCTQ_-_12.svg/75px-DJCTQ_-_12.svg.png", "Autoriza a representação de uma ampla gama de temas, incluindo violência, assédio, conteúdo sexual, uso de drogas e outras atividades controversas."),
+("14", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/DJCTQ_-_14.svg/75px-DJCTQ_-_14.svg.png", "As cenas podem incluir aborto, estigma, eutanásia, exploração sexual, morte intencional e pena de morte. Também são permitidas nudez, prostituição, relação sexual e referências ao consumo ou tráfico de drogas ilícitas."),
+("16", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/DJCTQ_-_16.svg/75px-DJCTQ_-_16.svg.png", "Permite-se representações de pedofilia, crime de ódio, estupro, mutilação, suicídio, tortura e violência gratuita. Também são permitidos conteúdos relacionados ao consumo, indução, produção ou tráfico de drogas ilícitas."),
 ("18", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/DJCTQ_-_18.svg/75px-DJCTQ_-_18.svg.png", "conteúdo exclusivamente destinado a adultos, sendo possível veicular apologia à violência e crueldade, sexo explícito, situação sexual complexa ou de forte impacto, e apologia ao uso de droga ilícita.");
 
 insert into tbl_diretores(nome) values
@@ -145,13 +145,13 @@ insert into tbl_genero(nome)values
 ("Terror"),
 ("Infantil"),
 ("Aventura"),
-("Faroeste");
-("Mistério");
+("Faroeste"),
+("Mistério"),
 ("Suspense");
 
 insert into tbl_filmes_genero (id_genero, id_filme)values
-(2, 20);                                
-
+(2, 20); 
+                                
 -- GET
 select * from tbl_filme where nome like '%be%';
 select * from tbl_filme;
@@ -172,7 +172,8 @@ update tbl_filme set
 					duracao = "01h50",
 					data_lancamento = "2003-01-27",
 					data_relancamento = "",
-					foto_capa = "https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/87/01/04/19871068.jpg",
-					valor_unitario = 23
+					foto_capa = "https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/87/01/04/19871068.jpg"
 
 					where id = 20;
+                    
+                    
