@@ -46,7 +46,7 @@ app.use((request, response, next) => {
     const controllerGenero = require('./controller/controller_genero.js')
     const controllerClassificacao = require('./controller/controller_classificacao.js')
     const controllerAtores = require('./controller/controller_atores.js')
-    const controllerNacionalidadesAtores = require('./controller/controller_atorerNacionalidade.js')
+    const controllerNacionalidadesAtores = require('./controller/controller_atoresNacionalidade.js')
 /*******************************************************************************/
 
 // #region FILMES
@@ -779,4 +779,6 @@ app.put('/v2/acme_filmes/nacionalidade_ator/:id', cors(), bodyParserJSON, async(
 })
 /*******************************************************************************/
 
+
+console.log("API rodando na porta 8080")
 app.listen(8080, () => {})

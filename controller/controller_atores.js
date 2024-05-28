@@ -2,7 +2,7 @@
 const atoresDAO = require('../model/DAO/ator.js')
 const atoresNacionalidadeDAO = require('../model/DAO/atorNacionalidade.js')
 const controllerSexo = require('./controller_sexo.js')
-const controllerNacionalidadeAtores = require('./controller_atoreNacionalidade.js')
+const controllerNacionalidadeAtores = require('./controller_atoresNacionalidade.js')
 
 // import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')

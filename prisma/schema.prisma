@@ -9,14 +9,13 @@ datasource db {
 
 model tbl_atores {
   id                       Int                        @id @default(autoincrement())
-  nome                     String                     @db.VarChar(150)
+  nome                     String                     @db.VarChar(200)
   data_nascimento          DateTime                   @db.Date
   data_falecimento         DateTime?                  @db.Date
+  biografia                String                     @db.Text
   id_sexo                  Int
-  biografia                String?                    @db.Text
   tbl_sexo                 tbl_sexo                   @relation(fields: [id_sexo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_atores_ibfk_1")
   tbl_atores_nacionalidade tbl_atores_nacionalidade[]
-  tbl_filmes_atores        tbl_filmes_atores[]
 
   @@index([id_sexo], map: "id_sexo")
 }
@@ -35,44 +34,32 @@ model tbl_atores_nacionalidade {
 model tbl_classificacao {
   id        Int         @id @default(autoincrement())
   sigla     String      @db.VarChar(2)
-  icone     String      @db.VarChar(150)
-  descricao String      @db.VarChar(150)
+  icone     String      @db.VarChar(500)
+  descricao String      @db.VarChar(500)
   tbl_filme tbl_filme[]
 }
 
 model tbl_diretores {
   id                   Int                    @id @default(autoincrement())
-  nome                 String                 @db.VarChar(150)
+  nome                 String                 @db.VarChar(200)
   tbl_filmes_diretores tbl_filmes_diretores[]
 }
 
 model tbl_filme {
-  id                   Int                    @id @unique(map: "id") @default(autoincrement())
-  nome                 String                 @db.VarChar(80)
+  id                   Int                    @id @default(autoincrement())
+  nome                 String                 @db.VarChar(100)
   sinopse              String                 @db.Text
   duracao              DateTime               @db.Time(0)
   data_lancamento      DateTime               @db.Date
   data_relancamento    DateTime?              @db.Date
   foto_capa            String                 @db.VarChar(200)
-  link_trailer         String                 @db.VarChar(150)
+  link_trailer         String                 @db.VarChar(200)
   id_classificacao     Int
   tbl_classificacao    tbl_classificacao      @relation(fields: [id_classificacao], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_filme_ibfk_1")
-  tbl_filmes_atores    tbl_filmes_atores[]
   tbl_filmes_diretores tbl_filmes_diretores[]
   tbl_filmes_genero    tbl_filmes_genero[]
 
   @@index([id_classificacao], map: "id_classificacao")
-}
-
-model tbl_filmes_atores {
-  id         Int        @id @default(autoincrement())
-  id_filme   Int
-  id_ator   Int
-  tbl_filme  tbl_filme  @relation(fields: [id_filme], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_filmes_atores_ibfk_1")
-  tbl_atores tbl_atores @relation(fields: [id_ator], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_filmes_atores_ibfk_2")
-
-  @@index([id_ator], map: "id_ator")
-  @@index([id_filme], map: "id_filme")
 }
 
 model tbl_filmes_diretores {
@@ -93,8 +80,8 @@ model tbl_filmes_genero {
   tbl_genero tbl_genero @relation(fields: [id_genero], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_filmes_genero_ibfk_1")
   tbl_filme  tbl_filme  @relation(fields: [id_filme], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_filmes_genero_ibfk_2")
 
-  @@index([filme_id], map: "id_filme")
-  @@index([genero_id], map: "id_genero")
+  @@index([id_filme], map: "id_filme")
+  @@index([id_genero], map: "id_genero")
 }
 
 model tbl_genero {
@@ -105,13 +92,13 @@ model tbl_genero {
 
 model tbl_nacionalidade {
   id                       Int                        @id @default(autoincrement())
-  nome                     String                     @db.VarChar(45)
+  nome                     String                     @db.VarChar(50)
   tbl_atores_nacionalidade tbl_atores_nacionalidade[]
 }
 
 model tbl_sexo {
   id         Int          @id @default(autoincrement())
-  nome       String       @db.VarChar(15)
+  nome       String       @db.VarChar(20)
   sigla      String       @db.VarChar(2)
   tbl_atores tbl_atores[]
 }
